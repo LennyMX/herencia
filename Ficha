@@ -1,0 +1,72 @@
+public class Ficha implements Movible {
+
+    protected int valorIzquierdo;
+    protected int valorDerecho;
+    private boolean estaVisible;
+
+    public Ficha(int valorIzquierdo, int valorDerecho) {
+        this.valorIzquierdo = valorIzquierdo;
+        this.valorDerecho = valorDerecho;
+        this.estaVisible = true;
+    }
+
+    public int obtenervalorIzquierdo() {
+        return valorIzquierdo;
+    }
+
+    public void asignarvalorIzquierdo(int valorIzquierdo) {
+        this.valorIzquierdo = valorIzquierdo;
+    }
+
+    public int obtenervalorDerecho() {
+        return valorDerecho;
+    }
+
+    public void asignarvalorDerecho(int valorDerecho) {
+        this.valorDerecho = valorDerecho;
+    }
+
+    public boolean esVisible() {
+        return estaVisible;
+    }
+
+    public void cambiarVisibilidad(boolean visibilidad) {
+        this.estaVisible = visibilidad;
+    }
+    public boolean esCompatible(Ficha otraFicha) {
+        return this.valorIzquierdo == otraFicha.valorIzquierdo ||
+                this.valorIzquierdo == otraFicha.valorDerecho ||
+                this.valorDerecho == otraFicha.valorIzquierdo ||
+                this.valorDerecho == otraFicha.valorDerecho;
+    }
+
+    public int sumaPuntos() {
+        return valorIzquierdo + valorDerecho;
+    }
+
+    @Override
+    public String toString() {
+        return estaVisible ? " [ " + valorIzquierdo + " | " + valorDerecho + " ] "
+                : " [ x | x ] ";
+    }
+
+    public void alternarVisibilidad() {
+        estaVisible = !estaVisible;
+    }
+
+    @Override
+    public void rotateRight() {
+        intercambiarExtremos();
+    }
+
+    @Override
+    public void rotateLeft() {
+        intercambiarExtremos();
+    }
+
+    private void intercambiarExtremos() {
+        int temp = valorIzquierdo;
+        valorIzquierdo = valorDerecho;
+        valorDerecho = temp;
+    }
+}
