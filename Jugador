@@ -1,0 +1,102 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Jugador {
+    private String nombre;
+    private ArrayList<Ficha> fichas;
+    private int puntos;
+
+    // Constructor
+    public Jugador(String nombre) {
+        this.nombre = nombre;
+        this.fichas = new ArrayList<>();
+        this.puntos = 0;
+    }
+
+    // Obtener el nombre del jugador
+    public String getNombre() {
+        return nombre;
+    }
+
+    // Agregar una ficha al jugador
+    public void agregarFicha(Ficha ficha) {
+        fichas.add(ficha);
+    }
+
+    // Mostrar las fichas del jugador
+    public void mostrarFichas() {
+        System.out.println("\nFichas de " + nombre + ":");
+        for (int i = 0; i < fichas.size(); i++) {
+            System.out.println((i + 1) + ". " + fichas.get(i));
+        }
+    }
+
+    // Seleccionar una ficha para jugar
+    public Ficha seleccionarFicha(Scanner scanner, String mensaje) {
+        mostrarFichas();
+        System.out.println(mensaje);
+        int indice;
+        do {
+            System.out.print("Elige una ficha por su número: ");
+            indice = scanner.nextInt() - 1;
+        } while (indice < 0 || indice >= fichas.size());
+
+        return fichas.remove(indice);
+    }
+
+    // Seleccionar una ficha válida
+    public Ficha seleccionarFichaValida(Scanner scanner, Ficha ultimaFicha) {
+        ArrayList<Ficha> fichasValidas = obtenerFichasValidas(ultimaFicha);
+
+        if (fichasValidas.isEmpty()) {
+            System.out.println("No tienes fichas válidas para jugar.");
+            return null;
+        }
+
+        System.out.println("\nFichas válidas para jugar:");
+        for (int i = 0; i < fichasValidas.size(); i++) {
+            System.out.println((i + 1) + ". " + fichasValidas.get(i));
+        }
+
+        int indice;
+        do {
+            System.out.print("Elige una ficha válida por su número: ");
+            indice = scanner.nextInt() - 1;
+        } while (indice < 0 || indice >= fichasValidas.size());
+
+        Ficha fichaSeleccionada = fichasValidas.get(indice);
+        fichas.remove(fichaSeleccionada); // Eliminar de la mano del jugador
+        return fichaSeleccionada;
+    }
+
+    // Obtener fichas válidas para jugar
+    public ArrayList<Ficha> obtenerFichasValidas(Ficha ultimaFicha) {
+        ArrayList<Ficha> fichasValidas = new ArrayList<>();
+        for (Ficha ficha : fichas) {
+            if (ficha.esCompatible(ultimaFicha)) {
+                fichasValidas.add(ficha);
+            }
+        }
+        return fichasValidas;
+    }
+
+    // Verificar si tiene fichas válidas
+    public boolean tieneFichasValidas(Ficha ultimaFicha) {
+        return !obtenerFichasValidas(ultimaFicha).isEmpty();
+    }
+
+    // Sumar puntos al jugador
+    public void sumarPuntos(int puntos) {
+        this.puntos += puntos;
+    }
+
+    // Obtener los puntos del jugador
+    public int getPuntos() {
+        return puntos;
+    }
+
+    // Verificar si la mano está vacía
+    public boolean manoVacia() {
+        return fichas.isEmpty();
+    }
+}
