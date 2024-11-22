@@ -1,0 +1,132 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Scanner;
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class Main {
+    private ArrayList<Ficha> pozo = new ArrayList<>();
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Solicitar la cantidad de puntos necesarios para ganar
+        System.out.println("Bienvenido al juego de Dominó y Tridominó.");
+        System.out.print("Por favor, ingresa la cantidad de puntos necesarios para ganar: ");
+        int puntosParaGanar = scanner.nextInt();
+
+        // Inicialización de las fichas
+        System.out.println("Iniciando el juego...");
+        Tridominos tridomino = new Tridominos(6); // Fichas de Tridominó
+        Dominos domino = new Dominos(6);         // Fichas de Dominó
+
+        // Mezclar fichas
+        ArrayList<Ficha> pozo = new ArrayList<>();
+        pozo.addAll(domino.obtenerFichas());
+        pozo.addAll(tridomino.obtenerFichasTridomino());
+        Collections.shuffle(pozo);
+
+        // Crear jugadores
+        Jugador jugador1 = new Jugador("Jugador 1");
+        Jugador jugador2 = new Jugador("Jugador 2");
+
+        // Repartir 10 fichas a cada jugador
+        repartirFichas(jugador1, pozo, 10);
+        repartirFichas(jugador2, pozo, 10);
+
+        // Determinar quién inicia
+        System.out.println("\nDeterminar quién inicia:");
+        Ficha fichaJ1 = jugador1.seleccionarFicha(scanner, "Jugador 1, elige una ficha para iniciar:");
+        Ficha fichaJ2 = jugador2.seleccionarFicha(scanner, "Jugador 2, elige una ficha para iniciar:");
+        int puntosJ1 = fichaJ1.sumaPuntos();
+        int puntosJ2 = fichaJ2.sumaPuntos();
+
+        System.out.println("Puntos Jugador 1: " + puntosJ1 + ", Puntos Jugador 2: " + puntosJ2);
+        Ficha fichaInicial;
+        Jugador jugadorActual, siguienteJugador;
+
+        if (puntosJ1 >= puntosJ2) {
+            fichaInicial = fichaJ1;
+            jugadorActual = jugador1;
+            siguienteJugador = jugador2;
+        } else {
+            fichaInicial = fichaJ2;
+            jugadorActual = jugador2;
+            siguienteJugador = jugador1;
+        }
+
+        System.out.println(jugadorActual.getNombre() + " inicia con la ficha: " + fichaInicial);
+        ArrayList<Ficha> mesa = new ArrayList<>();
+        mesa.add(fichaInicial);
+
+        // Bucle del juego
+        boolean juegoActivo = true;
+        while (juegoActivo) {
+            System.out.println("\nTurno de " + jugadorActual.getNombre());
+            // Mostrar los puntos actuales de los jugadores
+            System.out.println("Puntos actuales - " + jugador1.getNombre() + ": " + jugador1.getPuntos() + " | " + jugador2.getNombre() + ": " + jugador2.getPuntos());
+            System.out.println("Fichas en la mesa: " + mesa);
+
+            Ficha ultimaFicha = mesa.get(mesa.size() - 1);
+            jugadorActual.mostrarFichas();
+            Ficha fichaJugada = jugadorActual.seleccionarFichaValida(scanner, ultimaFicha);
+
+            if (fichaJugada != null) {
+                System.out.println("Ficha jugada: " + fichaJugada);
+                mesa.add(fichaJugada);
+                // Sumar puntos al jugador por la ficha jugada
+                jugadorActual.sumarPuntos(fichaJugada.sumaPuntos());
+            } else {
+                System.out.println("No tienes fichas válidas, tomas 2 del pozo.");
+                tomarDelPozo(jugadorActual, pozo, 2);
+                if (!jugadorActual.tieneFichasValidas(ultimaFicha)) {
+                    System.out.println("No puedes jugar. Turno perdido.");
+                }
+            }
+
+            // Verificar condiciones de fin del juego
+            if (jugadorActual.manoVacia()) {
+                System.out.println("\n¡" + jugadorActual.getNombre() + " ha ganado! Ha colocado todas sus fichas.");
+                juegoActivo = false;
+            } else if (jugadorActual.getPuntos() >= puntosParaGanar) {
+                System.out.println("\n¡" + jugadorActual.getNombre() + " ha alcanzado la meta de " + puntosParaGanar + " puntos!");
+                juegoActivo = false;
+            } else if (pozo.isEmpty() && !jugadorActual.tieneFichasValidas(ultimaFicha) && !siguienteJugador.tieneFichasValidas(ultimaFicha)) {
+                System.out.println("\nEl juego ha terminado. No hay más fichas en el pozo ni jugadas posibles.");
+                juegoActivo = false;
+            } else {
+                // Cambiar de turno
+                Jugador temp = jugadorActual;
+                jugadorActual = siguienteJugador;
+                siguienteJugador = temp;
+            }
+        }
+
+        // Determinar ganador final
+        System.out.println("\nPuntuaciones finales:");
+        System.out.println(jugador1.getNombre() + ": " + jugador1.getPuntos() + " puntos.");
+        System.out.println(jugador2.getNombre() + ": " + jugador2.getPuntos() + " puntos.");
+        if (jugador1.getPuntos() > jugador2.getPuntos()) {
+            System.out.println(jugador1.getNombre() + " es el ganador.");
+        } else if (jugador2.getPuntos() > jugador1.getPuntos()) {
+            System.out.println(jugador2.getNombre() + " es el ganador.");
+        } else {
+            System.out.println("¡Es un empate!");
+        }
+
+        scanner.close();
+    }
+
+    private static void repartirFichas(Jugador jugador, ArrayList<Ficha> pozo, int cantidad) {
+        for (int i = 0; i < cantidad; i++) {
+            if (!pozo.isEmpty()) {
+                jugador.agregarFicha(pozo.remove(0));
+            }
+        }
+    }
+
+    private static void tomarDelPozo(Jugador jugador, ArrayList<Ficha> pozo, int cantidad) {
+        for (int i = 0; i < cantidad && !pozo.isEmpty(); i++) {
+            jugador.agregarFicha(pozo.remove(0));
+        }
+    }
+}
