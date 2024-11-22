@@ -1,0 +1,73 @@
+public class FichaTridomino extends Ficha implements Movible {
+
+    private int valorSuperior;
+    private boolean estaVisible;
+
+    public FichaTridomino(int valorIzquierdo, int valorDerecho, int valorSuperior) {
+        super(valorIzquierdo, valorDerecho);
+        this.valorSuperior = valorSuperior;
+        this.estaVisible = true;
+    }
+
+    public int obtenervalorSuperior() {
+        return valorSuperior;
+    }
+
+    public void asignarvalorSuperior(int valorSuperior) {
+        this.valorSuperior = valorSuperior;
+    }
+
+    public boolean esVisible() {
+        return estaVisible;
+    }
+
+    public void cambiarVisibilidad(boolean visibilidad) {
+        this.estaVisible = visibilidad;
+    }
+
+    public void alternarVisibilidad() {
+        estaVisible = !estaVisible;
+    }
+
+    @Override
+    public int sumaPuntos() {
+        return valorIzquierdo + valorDerecho + valorSuperior;
+    }
+
+    @Override
+    public void rotateLeft() {
+        rotarExtremosCircularmente(true);
+    }
+
+    @Override
+    public void rotateRight() {
+        rotarExtremosCircularmente(false);
+    }
+
+    private void rotarExtremosCircularmente(boolean haciaIzquierda) {
+        if (haciaIzquierda) {
+            int temp = obtenervalorIzquierdo();
+            asignarvalorIzquierdo(obtenervalorDerecho());
+            asignarvalorDerecho(valorSuperior);
+            valorSuperior = temp;
+        } else {
+            int temp = obtenervalorIzquierdo();
+            asignarvalorIzquierdo(valorSuperior);
+            valorSuperior = obtenervalorDerecho();
+            asignarvalorDerecho(temp);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder representacion = new StringBuilder();
+        if (estaVisible) {
+            representacion.append("     ").append(obtenervalorIzquierdo()).append("\n");
+            representacion.append("   ").append(obtenervalorDerecho()).append("   ").append(valorSuperior).append("\n");
+        } else {
+            representacion.append("     x\n");
+            representacion.append("   x   x\n");
+        }
+        return representacion.toString();
+    }
+}
