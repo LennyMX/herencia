@@ -1,0 +1,41 @@
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class Dominos {
+
+    // Atributos de la clase
+    private ArrayList<Ficha> fichasDisponibles;
+
+    // Constructor que genera fichas basadas en el valor de la mula máxima
+    public Dominos(int maximoValorMula) {
+        fichasDisponibles = new ArrayList<>(); // Inicialización de la colección de fichas
+        for (int valorSuperior = 0; valorSuperior <= maximoValorMula; valorSuperior++) {
+            for (int valorInferior = 0; valorInferior <= valorSuperior; valorInferior++) {
+                fichasDisponibles.add(new Ficha(valorSuperior, valorInferior)); // Agregar nuevas fichas
+            }
+        }
+    }
+
+    // Método para imprimir todas las fichas
+    public void mostrarFichas() {
+        fichasDisponibles.forEach(ficha -> System.out.println(ficha));
+    }
+
+    // Método para obtener todas las fichas disponibles
+    public ArrayList<Ficha> obtenerFichas() {
+        return new ArrayList<>(fichasDisponibles); // Devolver una copia de la lista para evitar modificaciones externas
+    }
+
+    // Método para extraer la primera ficha de la colección
+    public Ficha extraerPrimeraFicha() {
+        if (fichasDisponibles.isEmpty()) {
+            return null; // Manejo seguro en caso de que no haya fichas
+        }
+        return fichasDisponibles.remove(0);
+    }
+
+    // Método para mezclar aleatoriamente las fichas
+    public void barajarFichas() {
+        Collections.shuffle(fichasDisponibles);
+    }
+}
