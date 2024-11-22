@@ -1,0 +1,51 @@
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class Tridominos {
+
+    // Atributos
+    private ArrayList<FichaTridomino> fichasTridomino;
+
+    // Constructor para generar las fichas del tridomino basado en la mula máxima
+    public Tridominos(int maximoValorMula) {
+        fichasTridomino = new ArrayList<>();
+        for (int primerLado = 0; primerLado <= maximoValorMula; primerLado++) {
+            for (int segundoLado = primerLado; segundoLado <= maximoValorMula; segundoLado++) {
+                for (int tercerLado = segundoLado; tercerLado <= maximoValorMula; tercerLado++) {
+                    fichasTridomino.add(new FichaTridomino(primerLado, segundoLado, tercerLado));
+                }
+            }
+        }
+    }
+
+    // Método para obtener todas las fichas disponibles
+    public ArrayList<FichaTridomino> obtenerFichasTridomino() {
+        return new ArrayList<>(fichasTridomino); // Devuelve una copia de la lista
+    }
+
+    // Método para asignar un conjunto de fichas (sobrescribe el actual)
+    public void establecerFichasTridomino(ArrayList<FichaTridomino> nuevasFichas) {
+        this.fichasTridomino = new ArrayList<>(nuevasFichas);
+    }
+
+    // Método para imprimir todas las fichas
+    public void mostrarFichas() {
+        fichasTridomino.forEach(ficha -> System.out.println(ficha));
+    }
+
+
+    // Método para mezclar las fichas
+    public void barajarFichas() {
+        Collections.shuffle(fichasTridomino);
+    }
+
+    // Método para tomar la primera ficha disponible
+    public FichaTridomino extraerPrimeraFicha() {
+        if (!fichasTridomino.isEmpty()) {
+            return fichasTridomino.remove(0);
+        } else {
+            System.out.println("No hay más fichas disponibles en el tridomino.");
+            return null;
+        }
+    }
+}
